@@ -62,10 +62,11 @@ namespace RTL.WebHost
                 app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
+
             app.UseSwagger();
             app.UseSwaggerUI(opts => opts.SwaggerEndpoint("/swagger/v1/swagger.json", "RTL Cast API v1"));
 
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
