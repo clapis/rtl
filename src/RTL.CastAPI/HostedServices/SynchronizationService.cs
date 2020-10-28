@@ -7,23 +7,23 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using RTL.CastAPI.Application.Commands.ScrapeShows;
+using RTL.CastAPI.Application.Commands.SyncMetadata;
 using RTL.CastAPI.Configuration;
 
 namespace RTL.CastAPI.HostedServices
 {
-    internal class ScrapingHostedService : IHostedService, IDisposable
+    internal class SynchronizationService : IHostedService, IDisposable
     {
         private Timer _timer;
 
-        private readonly ScrapingSettings _settings;
+        private readonly SynchronizationSettings _settings;
         private readonly IServiceProvider _services;
-        private readonly ILogger<ScrapingHostedService> _logger;
+        private readonly ILogger<SynchronizationService> _logger;
 
-        public ScrapingHostedService(
+        public SynchronizationService(
             IServiceProvider services,
-            ILogger<ScrapingHostedService> logger,
-            IOptions<ScrapingSettings> settings)
+            ILogger<SynchronizationService> logger,
+            IOptions<SynchronizationSettings> settings)
         {
             _logger = logger;
             _services = services;
@@ -32,7 +32,7 @@ namespace RTL.CastAPI.HostedServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Scraping Service init ({nameof(_settings.IsEnabled)}: {_settings.IsEnabled}, {nameof(_settings.Interval)}: {_settings.Interval})");
+            _logger.LogInformation($"Synchronization Service init ({nameof(_settings.IsEnabled)}: {_settings.IsEnabled}, {nameof(_settings.Interval)}: {_settings.Interval})");
 
             if (_settings.IsEnabled)
             {
@@ -44,7 +44,7 @@ namespace RTL.CastAPI.HostedServices
 
         private async void Execute(object state)
         {
-            _logger.LogInformation($"Scraping started.");
+            _logger.LogInformation($"Synchronization started.");
 
             try
             {
@@ -54,23 +54,23 @@ namespace RTL.CastAPI.HostedServices
 
                     var sw = Stopwatch.StartNew();
 
-                    await mediator.Send(new ScrapeShowsCommand());
+                    await mediator.Send(new SyncMetadataCommand());
 
                     sw.Stop();
 
-                    _logger.LogInformation($"Scraping completed. ({sw.ElapsedMilliseconds})ms");
+                    _logger.LogInformation($"Synchronization completed. ({sw.ElapsedMilliseconds})ms");
                 }
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Scraping failed.");
+                _logger.LogError(ex, $"Synchronization failed.");
             }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Scrapping Service shutting down.");
+            _logger.LogInformation($"Synchronization Service shutting down.");
 
             _timer?.Change(Timeout.Infinite, 0);
 

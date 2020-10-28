@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using RTL.CastAPI.Application.Commands.SyncMetadata;
 using RTL.CastAPI.Configuration;
 using RTL.CastAPI.HostedServices;
 using RTL.CastAPI.Infrastructure.Data;
-using RTL.CastAPI.Infrastructure.Data.InMemory;
+using RTL.CastAPI.Infrastructure.Data.EFCore;
 using RTL.CastAPI.Infrastructure.TvMaze;
 
 namespace RTL.WebHost
@@ -27,7 +28,7 @@ namespace RTL.WebHost
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<TvMazeSettings>(Configuration.GetSection("TvMaze"));
-            services.Configure<ScrapingSettings>(Configuration.GetSection("Scraping"));
+            services.Configure<SynchronizationSettings>(Configuration.GetSection("Synchronization"));
 
             services.AddMediatR(typeof(Startup));
             services.AddAutoMapper(typeof(Startup));
@@ -38,8 +39,11 @@ namespace RTL.WebHost
             
             services.AddTransient<ITvMazeHttpClient>(provider => provider.GetRequiredService<TvMazeHttpClient>());
 
-            services.AddHostedService<ScrapingHostedService>();
-            services.AddTransient<ICastRepository, InMemoryCastRepository>();
+            services.AddDbContext<CastDBContext>();
+            services.AddHostedService<SynchronizationService>();
+            services.AddTransient<IScrapingService, ScrapingService>();
+            services.AddTransient<IShowsRepository, ShowsRepository>();
+            services.AddTransient<IPeopleRepository, PeopleRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 

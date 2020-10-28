@@ -8,8 +8,7 @@ namespace RTL.CastAPI.Application.Queries.GetAllShowsCast
     {
         public MappingProfile()
         {
-            CreateMap<Show, GetAllShowsQueryResult.Show>()
-                .ForMember(x => x.Cast, opts => opts.MapFrom(s => s.Cast));
+            CreateMap<Show, GetAllShowsQueryResult.Show>();
 
             CreateMap<CastMember, GetAllShowsQueryResult.Person>()
                 .IncludeMembers(x => x.Person);
