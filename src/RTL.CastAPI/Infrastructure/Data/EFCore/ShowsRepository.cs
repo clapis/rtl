@@ -36,6 +36,7 @@ namespace RTL.CastAPI.Infrastructure.Data.EFCore
         public async Task<List<Show>> GetPageAsync(int page, int pageSize)
         {
             var results = await _context.Shows
+                            .AsNoTracking()
                             .OrderBy(x => x.Id)
                             .Skip(page * pageSize)
                             .Take(pageSize)

@@ -14,6 +14,15 @@ namespace RTL.CastAPI.Infrastructure.Data.EFCore
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Show>(e =>
+            {
+                e.HasIndex(p => p.ExternalId);
+                e.HasMany(p => p.Cast).WithOne(p => p.Show)
+                    .Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
+            });
+
+            builder.Entity<Person>(e => e.HasIndex(p => p.ExternalId));
+
             builder.Entity<CastMember>(e =>
             {
                 e.HasKey(x => new { x.ShowId, x.PersonId });

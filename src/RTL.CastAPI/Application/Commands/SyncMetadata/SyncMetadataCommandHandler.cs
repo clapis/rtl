@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
-using Microsoft.EntityFrameworkCore.Internal;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using RTL.CastAPI.Infrastructure.Data;
 using RTL.CastAPI.Model;
@@ -69,9 +67,6 @@ namespace RTL.CastAPI.Application.Commands.SyncMetadata
                 // use external ids to match to already synced people
                 var person = await _peopleRepository.FindByExternalIdAsync(dto.Id)
                         ?? new Person(dto.Name, dto.Id, dto.Birthday);
-
-                // If this person is already in the cast, skip it
-                if (person.Id != 0 && model.Cast.Any(m => m.PersonId == person.Id)) continue;
 
                 model.AddCastMember(person);
             }

@@ -4,21 +4,16 @@ namespace RTL.CastAPI.Model
 {
     public class Person
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public DateTime? Birthday { get; set; }
-        public int ExternalId { get; set; }
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+        public int ExternalId { get; private set; }
+        public DateTime? Birthday { get; private set; }
 
-        public Person()
-        {
-
-        }
-
-        public Person(string name, int externalid, DateTime? birthday) : this()
+        public Person(string name, int externalId, DateTime? birthday) 
         {
             Name = name;
-            ExternalId = externalid;
             Birthday = birthday;
+            ExternalId = externalId;
         }
 
     }

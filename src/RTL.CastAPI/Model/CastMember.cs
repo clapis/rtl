@@ -3,16 +3,13 @@
     public class CastMember
     {
 
-        public int ShowId { get; set; }
-        public Show Show { get; set; }
+        public int ShowId { get; private set; }
+        public Show Show { get; private set; }
 
-        public int PersonId { get; set; }
-        public Person Person { get; set; }
+        public int PersonId { get; private set; }
+        public Person Person { get; private set; }
 
-        public CastMember()
-        {
-
-        }
+        private CastMember() { }
 
         public CastMember(Show show, Person person) : this()
         {
