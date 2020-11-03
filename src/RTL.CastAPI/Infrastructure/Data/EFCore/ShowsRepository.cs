@@ -21,14 +21,11 @@ namespace RTL.CastAPI.Infrastructure.Data.EFCore
             await _context.SaveChangesAsync();
         }
 
-
         public async Task<int> GetMaxExternalIdAsync()
         {
-            var any = await _context.Shows.AnyAsync();
-
-            if (!any) return 0;
-
-            return await _context.Shows.MaxAsync(s => s.Id);
+            return await _context.Shows.Select(x => x.ExternalId)
+                                        .DefaultIfEmpty(default)
+                                        .MaxAsync();
         }
 
         public Task<Show> FindByExternalIdAsync(int externalId)
